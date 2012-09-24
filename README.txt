@@ -1,6 +1,6 @@
 == Tomodoro ==
 
-Tomodoro is a (yet another) simple timer for usage with <a href='http://en.wikipedia.org/wiki/Pomodoro_Technique'>pomodoro technique</a>.
+Tomodoro is a (yet another) simple timer for usage with the pomodoro technique (see: http://en.wikipedia.org/wiki/Pomodoro_Technique ).
 
 It is inteded to be pretty configurable.
 
