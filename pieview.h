@@ -8,11 +8,22 @@ class PieView : public QWidget
 {
     Q_OBJECT
 
+private:
+    QPoint      m_mouse_anchor;     // mouse cursor anchor (for handling dragging)
+    QPoint      m_win_anchor;       // buzzing anchor
 
-    QPoint      m_anchor;
+    QPoint      m_conf_buzz_dev;    // buzz deviation
 
-    int         m_current;
-    int         m_total;
+    // NOTE: if (m_current == m_total) then we're in buzz mode
+
+    int         m_current;          // seconds passed so far
+    int         m_total;            // total seconds to pass
+
+    QString     m_text;             // precalculated from current/total
+
+    bool is_buzzing() const {
+        return m_current == m_total;
+    }
 
 protected:
     void paintEvent ( QPaintEvent * event );

@@ -12,10 +12,15 @@ class Timer : public QObject
 {
     Q_OBJECT
 
+private:
+
     QTimer              m_timer;
     QMenu               m_menu;
     QSystemTrayIcon     m_icon;
     QWidget             m_parent_holder;
+
+    QAction*            act_start;
+    QAction*            act_stop;
 
     int         m_counter;
     int         m_total;
@@ -23,9 +28,13 @@ class Timer : public QObject
 
     PieView*    m_view;
 
+    void show_hide_actions();
+
 private slots:
     void timeout();
 
+    void action_start();
+    void action_stop();
     void action_exit();
 
     void view_context_request(QPoint);

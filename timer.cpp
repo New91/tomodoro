@@ -15,7 +15,8 @@ Timer::Timer(QObject *parent) :
     m_icon(),
     m_parent_holder(),
     m_counter(0),
-    m_total(100)
+    m_total(25*60),
+    m_view(NULL)
 {
     // set up the timer
     m_timer.start(1000);
@@ -25,17 +26,17 @@ Timer::Timer(QObject *parent) :
 
 
     // set up a menu
-    m_menu.addAction("Something");
+    act_start = m_menu.addAction("Start");
+    act_stop = m_menu.addAction("Cancel");
+
+    connect(act_start, SIGNAL(triggered()), SLOT(action_start()));
+    connect(act_stop,  SIGNAL(triggered()), SLOT(action_stop()) );
+
     m_menu.addSeparator();
+
     connect(m_menu.addAction("Exit"), SIGNAL(triggered()), SLOT(action_exit()));
 
-    // show a view
-    m_view = new PieView(&m_parent_holder);
-    m_view->show();
-
-    connect(this, SIGNAL(tick(int,int)), m_view, SLOT(tick(int,int)));
-
-    connect(m_view, SIGNAL(customContextMenuRequested(QPoint)), SLOT(view_context_request(QPoint)));
+    show_hide_actions();
 
 
     // set up systray icon
@@ -45,13 +46,50 @@ Timer::Timer(QObject *parent) :
     m_icon.show();
 }
 
-
-void Timer::timeout() {
-    if(m_counter < m_total) m_counter++;
-
-    emit tick(m_counter, m_total);
+void Timer::show_hide_actions() {
+    if(m_view != NULL) {
+        act_start->setVisible(false);
+        act_stop ->setVisible(true);
+    }else {
+        act_start->setVisible(true);
+        act_stop->setVisible(false);
+    }
 }
 
+
+void Timer::timeout() {
+    if(m_view != NULL) {
+        if(m_counter < m_total) {
+            m_counter++;
+        } else {
+            m_timer.setInterval(0.2);
+        }
+
+        /* emit */ m_view->tick(m_counter, m_total);
+    }
+}
+
+
+
+void Timer::action_start(){
+    // show a view
+    m_view = new PieView(&m_parent_holder);
+    m_view->show();
+
+    //connect(this, SIGNAL(tick(int,int)), m_view, SLOT(tick(int,int)));
+
+    connect(m_view, SIGNAL(customContextMenuRequested(QPoint)), SLOT(view_context_request(QPoint)));
+
+    show_hide_actions();
+}
+
+void Timer::action_stop() {
+    //m_view->deleteLater();
+    delete m_view;
+    m_view = NULL;
+
+    show_hide_actions();
+}
 
 void Timer::action_exit() {
     QApplication::exit();
