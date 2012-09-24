@@ -10,6 +10,13 @@ TARGET = tomodoro
 TEMPLATE = app
 
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    timer.cpp \
+    pieview.cpp
 
-HEADERS  +=
+HEADERS  += \
+    timer.h \
+    pieview.h
+
+RESOURCES += \
+    resources.qrc

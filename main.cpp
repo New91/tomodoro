@@ -1,14 +1,25 @@
 #include <QtGui/QApplication>
 
-#include <QWidget>
+
+#include "timer.h"
+
+
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    QWidget     w;
+//    PieView     pie;
 
-    w.show();
-    
+//    pie.show();
+
+
+
+    Timer       timer;
+
+
+
+
+
     return a.exec();
 }
