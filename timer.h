@@ -26,6 +26,8 @@ private:
     int                 m_counter;
     int                 m_total;
 
+    int                 m_buzz_interval;
+
 
     SettingsDialog*     m_settings;
     PieView*            m_view;

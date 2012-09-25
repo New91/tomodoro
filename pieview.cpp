@@ -1,5 +1,7 @@
 #include "pieview.h"
 
+#include "settings.h"
+
 #include <QPainter>
 
 #include <QMouseEvent>
@@ -12,17 +14,25 @@ PieView::PieView(QWidget *parent) :
     QWidget(parent, Qt::FramelessWindowHint| Qt::WindowStaysOnTopHint | Qt::Dialog),
     m_mouse_anchor(),
     m_win_anchor(),
-    m_conf_buzz_dev(5,5),
+
+    m_conf_buzz_dev(5),
+
     m_current(0),
-    m_total(100)
+    m_total(100),
+
+    m_text(),
+
+    m_op_normal(0.5),
+    m_op_focused(0.8)
+
 {
     setAttribute(Qt::WA_TranslucentBackground);
-
-    setWindowOpacity(0.7);
 
     resize(200, 200);
 
     setContextMenuPolicy(Qt::CustomContextMenu);
+
+    update_settings();
 }
 
 
@@ -86,12 +96,12 @@ void PieView::mouseMoveEvent(QMouseEvent* event) {
 }
 
 void PieView::enterEvent(QEvent *) {
-    setWindowOpacity(0.8);
+    setWindowOpacity(m_op_focused);
 }
 
 
 void PieView::leaveEvent(QEvent *) {
-    setWindowOpacity(0.5);
+    setWindowOpacity(m_op_normal);
 }
 
 
@@ -115,7 +125,9 @@ void PieView::tick(int current, int total) {
         // If we're gonna buzz, then offset the window
 
         if(buzzing) {
-            move(m_win_anchor + QPoint(qrand() % (m_conf_buzz_dev.x() * 2 + 1), qrand() % (m_conf_buzz_dev.y() * 2 + 1)) - m_conf_buzz_dev);
+#define RAND_DEV        ((qrand() % (m_conf_buzz_dev * 2 + 1)) - m_conf_buzz_dev)
+            move(m_win_anchor + QPoint(RAND_DEV, RAND_DEV));
+#undef  RAND_DEV
         }else {
             m_win_anchor = pos();
         }
@@ -139,3 +151,16 @@ void PieView::tick(int current, int total) {
         update();
     }
 }
+
+void PieView::update_settings() {
+    Settings        s;
+
+    m_conf_buzz_dev = s.view.buzz_dev;
+
+    m_op_normal  = s.view.op_normal;
+    m_op_focused = s.view.op_focused;
+
+    setWindowOpacity(m_op_normal);
+
+}
+

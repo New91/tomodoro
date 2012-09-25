@@ -23,6 +23,8 @@ Timer::Timer(QObject *parent) :
     m_counter(0),
     m_total(10),
 
+    m_buzz_interval(30),
+
     m_settings(NULL),
     m_view(NULL)
 {
@@ -52,6 +54,12 @@ Timer::Timer(QObject *parent) :
 
     // read settings
     update_settings();
+
+
+
+    /////
+
+    //action_configure();
 }
 
 void Timer::show_hide_actions() {
@@ -70,7 +78,7 @@ void Timer::timeout() {
         if(m_counter < m_total) {
             m_counter++;
         } else {
-            m_timer.setInterval(30);
+            m_timer.setInterval(m_buzz_interval);
         }
 
         /* emit */ m_view->tick(m_counter, m_total);
@@ -132,8 +140,17 @@ void Timer::dialog_destroyed(){
 }
 
 void Timer::update_settings() {
-    int new_total = Settings().interval;
+    qDebug("updating settings");
 
+    Settings    s;
+
+    int new_total = s.interval * 60;
     m_counter = m_counter * new_total / m_total;
     m_total = new_total;
+
+    m_buzz_interval = s.view.buzz_int;
+
+    if(m_view != NULL) {
+        m_view->update_settings();
+    }
 }

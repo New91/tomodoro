@@ -3,15 +3,38 @@
 
 #include <QDialog>
 
+
+class QLineEdit;
+
 class SettingsDialog : public QDialog
 {
     Q_OBJECT
-public:
-    explicit SettingsDialog(QWidget *parent = 0);
+
+
+private:
+    struct {
+        QLineEdit*      timeout;
+    } m_common;
+
+    struct {
+        QLineEdit*      op_normal;
+        QLineEdit*      op_focused;
+
+        QLineEdit*      buzz_int;
+        QLineEdit*      buzz_dev;
+    } m_view;
+
+
+
+
+    void load_configuration();
 
 private slots:
     void on_accept();
     
+public:
+    explicit SettingsDialog(QWidget *parent = 0);
+
 };
 
 #endif // SETTINGSDIALOG_H
