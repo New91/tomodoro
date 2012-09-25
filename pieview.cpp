@@ -4,6 +4,10 @@
 
 #include <QMouseEvent>
 
+
+#include <QApplication>
+#include <QDesktopWidget>
+
 PieView::PieView(QWidget *parent) :
     QWidget(parent, Qt::FramelessWindowHint| Qt::WindowStaysOnTopHint | Qt::Dialog),
     m_mouse_anchor(),
@@ -50,13 +54,32 @@ void PieView::mousePressEvent(QMouseEvent* event) {
 
 void PieView::mouseMoveEvent(QMouseEvent* event) {
     if(event->buttons() & Qt::LeftButton) {
-        QPoint  n = event->globalPos();
+        QPoint      n = event->globalPos();
+
+        QPoint      win_pos = is_buzzing() ? m_win_anchor : pos();
+
+        // shift the win position
+        win_pos += n - m_mouse_anchor;
+
+        // crop the movement
+        QRect scr = QApplication::desktop()->screenGeometry();
+
+        scr.adjust(0, 0, -width(), -height());
+
+        if     (win_pos.x() < scr.left())   win_pos.setX(scr.left());
+        else if(win_pos.x() > scr.right())  win_pos.setX(scr.right());
+
+        if     (win_pos.y() < scr.top())    win_pos.setY(scr.top());
+        else if(win_pos.y() > scr.bottom()) win_pos.setY(scr.bottom());
+
 
         if(is_buzzing()) {
-            m_win_anchor += n - m_mouse_anchor;
+            m_win_anchor = win_pos;
         } else {
-            move(pos() + n - m_mouse_anchor);
+            move(win_pos);
         }
+
+        // memorize the mouse position
 
         m_mouse_anchor = n;
     }

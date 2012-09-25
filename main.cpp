@@ -1,5 +1,5 @@
 #include <QtGui/QApplication>
-
+#include "settings.h"
 
 #include "timer.h"
 
@@ -11,15 +11,17 @@ int main(int argc, char *argv[])
 
     a.setQuitOnLastWindowClosed(false);
 
-//    PieView     pie;
+    // set up settings
+    QCoreApplication::setOrganizationName("Makarevich & Co");
+    QCoreApplication::setOrganizationDomain("makarevich-and-co.com");
+    QCoreApplication::setApplicationName("Tomodoro");
 
-//    pie.show();
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+
 
 
 
     Timer       timer;
-
-
 
 
 

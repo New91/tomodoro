@@ -12,11 +12,15 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     timer.cpp \
-    pieview.cpp
+    pieview.cpp \
+    settings.cpp \
+    settingsdialog.cpp
 
 HEADERS  += \
     timer.h \
-    pieview.h
+    pieview.h \
+    settings.h \
+    settingsdialog.h
 
 RESOURCES += \
     resources.qrc
