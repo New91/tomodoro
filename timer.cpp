@@ -17,6 +17,8 @@ Timer::Timer(QObject *parent) :
     m_icon(),
     m_parent_holder(),
 
+    m_stop_time(),
+
     act_start(NULL),
     act_stop(NULL),
 
@@ -47,9 +49,10 @@ Timer::Timer(QObject *parent) :
 
     // set up systray icon
     m_icon.setIcon(QIcon(":/resources/tomato.png"));
-    m_icon.setToolTip("Tomodoro");
     m_icon.setContextMenu(&m_menu);
     m_icon.show();
+
+    set_tray_tip();
 
 
     // read settings
@@ -82,6 +85,17 @@ void Timer::timeout() {
         }
 
         /* emit */ m_view->tick(m_counter, m_total);
+    }else if (!m_stop_time.isNull()) {
+        // If we're not counting anything (we have no view),
+        // update the icons tooltip to indicate idle time.
+
+        int elapsed_sec = m_stop_time.elapsed() / 1000;
+
+        QString tip = QString("idling for %1:%2")
+                 .arg(QString::number(elapsed_sec / 60), 2, '0')
+                 .arg(QString::number(elapsed_sec % 60), 2, '0');
+
+        set_tray_tip(tip);
     }
 }
 
@@ -100,6 +114,8 @@ void Timer::action_start(){
     // reset the timer
     m_counter = 0;
     m_timer.start(1000);
+
+    set_tray_tip();
 }
 
 void Timer::action_stop() {
@@ -109,7 +125,10 @@ void Timer::action_stop() {
     show_hide_actions();
 
     // stop the timer
-    m_timer.stop();
+    m_timer.start(1000);
+
+    // memorize current time
+    m_stop_time.start();
 }
 
 void Timer::action_configure() {
@@ -144,7 +163,7 @@ void Timer::update_settings() {
 
     Settings    s;
 
-    int new_total = s.interval * 60;
+    int new_total = s.interval;
     m_counter = m_counter * new_total / m_total;
     m_total = new_total;
 

@@ -1,6 +1,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
+#include <QTime>
 #include <QTimer>
 #include <QMenu>
 #include <QSystemTrayIcon>
@@ -20,6 +21,8 @@ private:
     QSystemTrayIcon     m_icon;
     QWidget             m_parent_holder;
 
+    QTime               m_stop_time;
+
     QAction*            act_start;
     QAction*            act_stop;
 
@@ -33,6 +36,15 @@ private:
     PieView*            m_view;
 
     void show_hide_actions();
+
+    void set_tray_tip(QString m = QString()) {
+        if(m.isNull()) {
+            m_icon.setToolTip("Tomodoro");
+            return;
+        }
+
+        m_icon.setToolTip(QString("Tomodoro (%1)").arg(m));
+    }
 
 private slots:
     // timer timeout
