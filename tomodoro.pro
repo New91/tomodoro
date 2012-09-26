@@ -14,13 +14,15 @@ SOURCES += main.cpp \
     timer.cpp \
     pieview.cpp \
     settings.cpp \
-    settingsdialog.cpp
+    settingsdialog.cpp \
+    abstractview.cpp
 
 HEADERS  += \
     timer.h \
     pieview.h \
     settings.h \
-    settingsdialog.h
+    settingsdialog.h \
+    abstractview.h
 
 RESOURCES += \
     resources.qrc

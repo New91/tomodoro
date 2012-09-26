@@ -8,7 +8,7 @@
 
 
 class SettingsDialog;
-class PieView;
+class AbstractView;
 
 class Timer : public QObject
 {
@@ -33,7 +33,7 @@ private:
 
 
     SettingsDialog*     m_settings;
-    PieView*            m_view;
+    AbstractView*       m_view;
 
     void show_hide_actions();
 
