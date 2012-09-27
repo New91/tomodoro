@@ -3,12 +3,14 @@
 
 #include "settings.h"
 
+#include "colorselector.h"
 
 #include <QMessageBox>
 
 #include <QBoxLayout>
 #include <QFormLayout>
 
+#include <QTabWidget>
 #include <QGroupBox>
 #include <QDialogButtonBox>
 
@@ -22,11 +24,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
-    ////
+    /////////////////////////////////////
 
     QBoxLayout*         main_layout = new QVBoxLayout(this);
-
-    // common group
 
     {
         QGroupBox*      gr   = new QGroupBox("Common");
@@ -58,6 +58,27 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         main_layout->addWidget(gr);
     }
 
+    {
+        QGroupBox*      gr   = new QGroupBox("Pie");
+        QFormLayout*    form = new QFormLayout(gr);
+
+#define COLOR_SELECTOR(name, member)                        \
+        {                                                   \
+            ColorSelector*  sel = new ColorSelector;        \
+            QBoxLayout*     l = new QHBoxLayout;            \
+            l->addWidget((member) = sel->attachedEdit());   \
+            l->addWidget(sel);                              \
+            form->addRow((name), l);                        \
+        }
+
+        COLOR_SELECTOR("Border",  m_pie.border);
+        COLOR_SELECTOR("Filling", m_pie.filling);
+
+#undef COLOR_SELECTOR
+
+        main_layout->addWidget(gr);
+    }
+
     main_layout->addStretch();
 
     {
@@ -85,6 +106,9 @@ void SettingsDialog::load_configuration() {
 
     m_view.buzz_int->setText(QString::number(s.view.buzz_int));
     m_view.buzz_dev->setText(QString::number(s.view.buzz_dev));
+
+    m_pie.border ->setText(s.pie.border);
+    m_pie.filling->setText(s.pie.filling);
 }
 
 void SettingsDialog::on_accept() {
@@ -94,6 +118,9 @@ void SettingsDialog::on_accept() {
 
     s.view.buzz_int = m_view.buzz_int->text().toInt();
     s.view.buzz_dev = m_view.buzz_dev->text().toInt();
+
+    s.pie.border  = m_pie.border->text();
+    s.pie.filling = m_pie.filling->text();
 
     //
     // Do not trust double validators

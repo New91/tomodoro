@@ -16,9 +16,33 @@ private:
     static const char  name_buzz_int[];
     static const char  name_buzz_dev[];
 
+    // pie
+    static const char  name_pie_radius[];
+    static const char  name_pie_text_size[];
+    static const char  name_pie_border[];
+    static const char  name_pie_filling[];
+    static const char  name_pie_text_border[];
+    static const char  name_pie_text_filling[];
+    static const char  name_pie_text_color[];
+
+
+
 public:
     explicit Settings(QObject *parent = 0) : QObject(parent) {
     }
+
+    template<const char* name>
+    class StrRef {
+    public:
+        operator QString() const {
+            return QSettings().value(name, "").toString();
+        }
+
+        StrRef& operator = (QString i) {
+            QSettings().setValue(name, i);
+            return *this;
+        }
+    };
 
     template<const char* name, int deflt = 0>
     class IntRef {
@@ -57,6 +81,14 @@ public:
         IntRef<name_buzz_int, 30>           buzz_int;
         IntRef<name_buzz_dev, 5>            buzz_dev;
     } view;
+
+    struct {
+        IntRef<name_pie_radius, 100>        radius;
+        IntRef<name_pie_text_size, 12>      text_size;
+
+        StrRef<name_pie_border>             border;
+        StrRef<name_pie_filling>            filling;
+    } pie;
 };
 
 #endif // SETTINGS_H

@@ -43,7 +43,7 @@ protected:
     
 public slots:
     void tick(int current, int total);
-    void update_settings();
+    virtual void update_settings();
     
 };
 

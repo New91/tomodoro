@@ -24,6 +24,11 @@ private:
         QLineEdit*      buzz_dev;
     } m_view;
 
+    struct {
+        QLineEdit*      border;
+        QLineEdit*      filling;
+    } m_pie;
+
 
 
 

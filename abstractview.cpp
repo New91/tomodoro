@@ -27,7 +27,7 @@ AbstractView::AbstractView(QWidget *parent) :
 
     setContextMenuPolicy(Qt::CustomContextMenu);
 
-    update_settings();
+    //update_settings();
 }
 
 
@@ -136,5 +136,4 @@ void AbstractView::update_settings() {
     m_op_focused = s.view.op_focused;
 
     setWindowOpacity(m_op_normal);
-
 }

@@ -62,7 +62,7 @@ Timer::Timer(QObject *parent) :
 
     /////
 
-    //action_configure();
+    action_configure(); // TODO: remove
 }
 
 void Timer::show_hide_actions() {
@@ -156,6 +156,8 @@ void Timer::view_context_request(QPoint local_pos) {
 
 void Timer::dialog_destroyed(){
     m_settings = NULL;
+
+    //action_exit();      // TODO: remove
 }
 
 void Timer::update_settings() {
