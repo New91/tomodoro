@@ -7,6 +7,7 @@
 
 
 class QLineEdit;
+class QComboBox;
 
 class SettingsDialog : public QDialog
 {
@@ -33,6 +34,10 @@ private:
 #define PIE_COLOR(name, member)     QLineEdit* member;
         PIE_COLORS
 #undef PIE_COLOR
+
+        QComboBox*      direction1;
+        QComboBox*      direction2;
+        QComboBox*      inverted;
     } m_pie;
 
 

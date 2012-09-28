@@ -106,6 +106,8 @@ void Timer::action_start(){
     m_view = new PieView(&m_parent_holder);
     m_view->show();
 
+    m_view->tick(m_counter, m_total);
+
     //connect(this, SIGNAL(tick(int,int)), m_view, SLOT(tick(int,int)));
     connect(m_view, SIGNAL(customContextMenuRequested(QPoint)), SLOT(view_context_request(QPoint)));
 
@@ -165,7 +167,7 @@ void Timer::update_settings() {
 
     Settings    s;
 
-    int new_total = s.interval;
+    int new_total = s.interval; // * 60    TODO: set it back
     m_counter = m_counter * new_total / m_total;
     m_total = new_total;
 

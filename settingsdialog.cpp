@@ -13,6 +13,7 @@
 #include <QDialogButtonBox>
 
 #include <QLineEdit>
+#include <QComboBox>
 
 #include <QIntValidator>
 #include <QDoubleValidator>
@@ -34,7 +35,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     QBoxLayout*         main_layout = new QVBoxLayout(this);
 
     {
-        QGroupBox*      gr   = new QGroupBox("Common");
+        QGroupBox*      gr   = new QGroupBox("General");
         QFormLayout*    form = new QFormLayout(gr);
 
         form->addRow("&Main timeout (min)", m_common.timeout = new QLineEdit);
@@ -70,6 +71,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         form->addRow("&Radius (px)",     m_pie.radius = new QLineEdit);
         form->addRow("&Font size (px)",  m_pie.text_size = new QLineEdit);
 
+        m_pie.radius->setValidator(new QIntValidator(10, 1000, this));
+        m_pie.text_size->setValidator(new QIntValidator(5, 30, this));
+
 #define PIE_COLOR(name, member)                            \
         {                                                       \
             ColorSelector*  sel = new ColorSelector;            \
@@ -79,12 +83,24 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
             form->addRow(name, l);                              \
         }
 
-        PIE_COLORS
+        PIE_COLORS;
 
 #undef PIE_COLOR
 
-        m_pie.radius->setValidator(new QIntValidator(10, 1000, this));
-        m_pie.text_size->setValidator(new QIntValidator(5, 30, this));
+        form->addRow("Start &direction", m_pie.direction1 = new QComboBox);
+        form->addRow("Grown d&irection", m_pie.direction2 = new QComboBox);
+        form->addRow("&Behaviour", m_pie.inverted = new QComboBox);
+
+        m_pie.direction1->addItem("Top");
+        m_pie.direction1->addItem("Right");
+        m_pie.direction1->addItem("Bottom");
+        m_pie.direction1->addItem("Left");
+
+        m_pie.direction2->addItem("Counterclockwise");
+        m_pie.direction2->addItem("Clockwise");
+
+        m_pie.inverted->addItem("Waxing");
+        m_pie.inverted->addItem("Waning");
 
         main_layout->addWidget(gr);
     }
@@ -121,8 +137,12 @@ void SettingsDialog::load_configuration() {
     m_pie.text_size->setText(QString::number(s.pie.text_size));
 
 #define PIE_COLOR(name, member) m_pie.member->setText(s.pie.member);
-    PIE_COLORS
+    PIE_COLORS;
 #undef PIE_COLOR
+
+    m_pie.direction1->setCurrentIndex(s.pie.direction1);
+    m_pie.direction2->setCurrentIndex(s.pie.direction2);
+    m_pie.inverted  ->setCurrentIndex(s.pie.inverted);
 }
 
 void SettingsDialog::on_accept() {
@@ -137,8 +157,12 @@ void SettingsDialog::on_accept() {
     s.pie.text_size = m_pie.text_size->text().toInt();
 
 #define PIE_COLOR(name, member) s.pie.member = m_pie.member->text();
-    PIE_COLORS
+    PIE_COLORS;
 #undef PIE_COLOR
+
+    s.pie.direction1 = m_pie.direction1->currentIndex();
+    s.pie.direction2 = m_pie.direction2->currentIndex();
+    s.pie.inverted   = m_pie.inverted  ->currentIndex();
 
     //
     // Do not trust double validators

@@ -21,7 +21,7 @@ AbstractView::AbstractView(QWidget *parent) :
     m_current(0),
     m_total(100),
 
-    m_text()
+    m_text("--:--")
 {
     setAttribute(Qt::WA_TranslucentBackground);
 

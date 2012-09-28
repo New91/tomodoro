@@ -17,6 +17,9 @@
     SETTING_NAME(buzz_dev);             \
     SETTING_NAME(pie_radius);           \
     SETTING_NAME(pie_text_size);        \
+    SETTING_NAME(pie_direction1);       \
+    SETTING_NAME(pie_direction2);       \
+    SETTING_NAME(pie_inverted);         \
     SETTING_NAME(pie_border);           \
     SETTING_NAME(pie_filling);          \
     SETTING_NAME(pie_text_border);      \
@@ -107,13 +110,15 @@ public:
         IntRef<name_pie_radius, 100>        radius;
         IntRef<name_pie_text_size, 12>      text_size;
 
+        IntRef<name_pie_direction1, 0>      direction1;     // start direction (0 - top, 1 - right, 2 - bottom, 3 - left)
+        IntRef<name_pie_direction2, 0>      direction2;     // clockwise (1) or counterclockwise (0)
+        IntRef<name_pie_inverted, 0>        inverted;       // gradually waxes (0) or wanes (1)
+
         StrRef<name_pie_border>             border;
         StrRef<name_pie_filling>            filling;
         StrRef<name_pie_text_border>        text_border;
         StrRef<name_pie_text_filling>       text_filling;
         StrRef<name_pie_text_color>         text_color;
-
-        // TODO: add direction settings
     } pie;
 };
 
