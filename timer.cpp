@@ -8,6 +8,7 @@
 #include "settings.h"
 #include "settingsdialog.h"
 #include "pieview.h"
+#include "barview.h"
 
 Timer::Timer(QObject *parent) :
     QObject(parent),
@@ -21,11 +22,14 @@ Timer::Timer(QObject *parent) :
 
     act_start(NULL),
     act_stop(NULL),
+    act_switch(NULL),
 
     m_counter(0),
     m_total(10),
 
     m_buzz_interval(30),
+
+    m_view_num(0),
 
     m_settings(NULL),
     m_view(NULL)
@@ -34,11 +38,13 @@ Timer::Timer(QObject *parent) :
     connect(&m_timer, SIGNAL(timeout()), SLOT(timeout()));
 
     // set up a menu
-    act_start = m_menu.addAction("Start");
-    act_stop =  m_menu.addAction("Cancel");
+    act_start   = m_menu.addAction("Start");
+    act_stop    = m_menu.addAction("Cancel");
+    act_switch  = m_menu.addAction("Switch view");
 
-    connect(act_start, SIGNAL(triggered()), SLOT(action_start()));
-    connect(act_stop,  SIGNAL(triggered()), SLOT(action_stop()) );
+    connect(act_start,  SIGNAL(triggered()), SLOT(action_start()));
+    connect(act_stop,   SIGNAL(triggered()), SLOT(action_stop()) );
+    connect(act_switch, SIGNAL(triggered()), SLOT(action_switch()) );
 
     connect(m_menu.addAction("Configure"), SIGNAL(triggered()), SLOT(action_configure()));
 
@@ -66,13 +72,31 @@ Timer::Timer(QObject *parent) :
 }
 
 void Timer::show_hide_actions() {
+    const bool idle = (m_view == NULL);
+
+    act_start ->setVisible( idle);
+    act_stop  ->setVisible(!idle);
+    act_switch->setVisible(!idle);
+}
+
+void Timer::create_new_view() {
     if(m_view != NULL) {
-        act_start->setVisible(false);
-        act_stop ->setVisible(true);
-    }else {
-        act_start->setVisible(true);
-        act_stop->setVisible(false);
+        delete m_view;
     }
+
+    if ((m_view_num & 1) == 0) {
+        m_view = new PieView(&m_parent_holder);
+    }else{
+        m_view = new BarView(&m_parent_holder);
+    }
+
+    // show a view
+    m_view->show();
+
+    m_view->tick(m_counter, m_total);
+
+    //connect(this, SIGNAL(tick(int,int)), m_view, SLOT(tick(int,int)));
+    connect(m_view, SIGNAL(customContextMenuRequested(QPoint)), SLOT(view_context_request(QPoint)));
 }
 
 
@@ -102,14 +126,7 @@ void Timer::timeout() {
 
 
 void Timer::action_start(){
-    // show a view
-    m_view = new PieView(&m_parent_holder);
-    m_view->show();
-
-    m_view->tick(m_counter, m_total);
-
-    //connect(this, SIGNAL(tick(int,int)), m_view, SLOT(tick(int,int)));
-    connect(m_view, SIGNAL(customContextMenuRequested(QPoint)), SLOT(view_context_request(QPoint)));
+    create_new_view();
 
     show_hide_actions();
 
@@ -133,6 +150,12 @@ void Timer::action_stop() {
     m_stop_time.start();
 }
 
+void Timer::action_switch() {
+    m_view_num++;
+
+    create_new_view();
+}
+
 void Timer::action_configure() {
     if(m_settings == NULL) {
         m_settings = new SettingsDialog;
@@ -153,7 +176,7 @@ void Timer::action_exit() {
 
 
 void Timer::view_context_request(QPoint local_pos) {
-    m_menu.popup( m_view->mapToGlobal(local_pos) );
+    m_menu.popup( m_view->mapToGlobal(local_pos) );     // NOTE: technically, m_view may be NULL, but that's unlikely
 }
 
 void Timer::dialog_destroyed(){

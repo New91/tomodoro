@@ -24,7 +24,9 @@
     SETTING_NAME(text_filling); \
     SETTING_NAME(text_color);   \
     SETTING_NAME(pie_radius);   \
-    SETTING_NAME(pie_grow_dir);
+    SETTING_NAME(pie_grow_dir); \
+    SETTING_NAME(bar_length);   \
+    SETTING_NAME(bar_width);
 
 
 
@@ -121,6 +123,11 @@ public:
 
         IntRef<name_pie_grow_dir, 0>        grow_dir;       // clockwise (1) or counterclockwise (0)
     } pie;
+
+    struct {
+        IntRef<name_bar_length, 100>        length;
+        IntRef<name_bar_width, 20>          width;
+    } bar;
 };
 
 #endif // SETTINGS_H

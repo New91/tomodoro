@@ -27,7 +27,7 @@ AbstractView::AbstractView(QWidget *parent) :
 
     setContextMenuPolicy(Qt::CustomContextMenu);
 
-    //update_settings();
+    //update_settings();                // delegate that to descendants
 }
 
 
@@ -150,4 +150,6 @@ void AbstractView::update_settings() {
     m_settings.text_color   = default_to_text((QColor)s.view.text_color);
     m_settings.filling      = default_to_button((QColor)s.view.filling);
     m_settings.text_filling = default_to_button((QColor)s.view.text_filling);
+
+    update();
 }

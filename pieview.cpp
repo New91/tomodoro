@@ -3,12 +3,7 @@
 #include <QPainter>
 
 
-#include <QMouseEvent>
-
-
-#include <QApplication>
-#include <QDesktopWidget>
-
+#include <QDebug>
 
 PieView::PieView(QWidget *parent) :
     AbstractView(parent)
@@ -35,12 +30,10 @@ void PieView::paintEvent ( QPaintEvent * ) {
         if(m_settings.flags & VIEW_INVERTED) span -= 16 * 360;
         if(m_clockwise) span = -span;
 
-        p.drawPie(0, 0, width() - 1, height() - 1, start, span);
+        p.drawPie(rect().adjusted(0, 0, -1, -1), start, span);
     }
 
-    QRect           text_rect = p.fontMetrics().boundingRect(m_text);
-
-    text_rect.adjust(-5, 0, 0, 0);
+    QRect  text_rect = p.fontMetrics().boundingRect(m_text).adjusted(-5, 0, 0, 0);
 
     text_rect.moveCenter(rect().center());
 
@@ -61,7 +54,5 @@ void PieView::update_settings() {
 
     const int d = s.pie.radius * 2;
     resize(d, d);
-
-    update();
 }
 

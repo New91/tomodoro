@@ -25,17 +25,21 @@ private:
 
     QAction*            act_start;
     QAction*            act_stop;
+    QAction*            act_switch;
 
     int                 m_counter;
     int                 m_total;
 
     int                 m_buzz_interval;
 
+    int                 m_view_num;
 
     SettingsDialog*     m_settings;
     AbstractView*       m_view;
 
     void show_hide_actions();
+
+    void create_new_view();
 
     void set_tray_tip(QString m = QString()) {
         if(m.isNull()) {
@@ -53,6 +57,7 @@ private slots:
     // action handlers
     void action_start();
     void action_stop();
+    void action_switch();
     void action_configure();
     void action_exit();
 

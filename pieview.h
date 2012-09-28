@@ -8,7 +8,6 @@ class PieView : public AbstractView
     Q_OBJECT
 
 private:
-
     bool        m_clockwise;        // clockwise setting
 
 protected:
