@@ -45,11 +45,17 @@ private:
 
     void load_configuration();
 
+    bool store_configuration();
+
 private slots:
     void on_accept();
-    
+    void on_apply();
+
 public:
     explicit SettingsDialog(QWidget *parent = 0);
+
+signals:
+    void settingsApplied();
 
 };
 

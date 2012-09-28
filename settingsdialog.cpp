@@ -10,6 +10,7 @@
 
 #include <QTabWidget>
 #include <QGroupBox>
+#include <QPushButton>
 #include <QDialogButtonBox>
 
 #include <QLineEdit>
@@ -117,10 +118,11 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     {
         QDialogButtonBox*   button_box =
-                new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel, Qt::Horizontal, this);
+                new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal, this);
 
         connect(button_box, SIGNAL(accepted()), SLOT(on_accept()));
         connect(button_box, SIGNAL(rejected()), SLOT(reject()));
+        connect(button_box->button(QDialogButtonBox::Apply), SIGNAL(clicked()), SLOT(on_apply()));
 
         main_layout->addWidget(button_box);
     }
@@ -153,7 +155,31 @@ void SettingsDialog::load_configuration() {
     m_pie.grow_dir->setCurrentIndex(s.pie.grow_dir);
 }
 
-void SettingsDialog::on_accept() {
+bool SettingsDialog::store_configuration() {
+    //
+    // Do not trust double validators
+    //
+
+    qreal op_normal  = m_view.op_normal->text().toDouble();
+    qreal op_focused = m_view.op_focused->text().toDouble();
+
+    if(op_normal < 0.0 || op_normal > 1.0) {
+        QMessageBox::warning(this, "Validation error", "View opacity must lie within 0.0 and 1.0");
+        m_view.op_normal->setFocus();
+        return false;
+    }
+
+    if(op_focused < 0.0 || op_focused > 1.0) {
+        QMessageBox::warning(this, "Validation error", "View opacity must lie within 0.0 and 1.0");
+        m_view.op_focused->setFocus();
+        return false;
+    }
+
+
+    //
+    // Store the settings, if everything's ok
+    //
+
     Settings        s;
 
     s.interval          = m_common.timeout->text().toInt();
@@ -172,27 +198,22 @@ void SettingsDialog::on_accept() {
     s.pie.radius    = m_pie.radius->text().toInt();
     s.pie.grow_dir  = m_pie.grow_dir->currentIndex();
 
-    //
-    // Do not trust double validators
-    //
-
-    qreal op_normal  = m_view.op_normal->text().toDouble();
-    qreal op_focused = m_view.op_focused->text().toDouble();
-
-    if(op_normal < 0.0 || op_normal > 1.0) {
-        QMessageBox::warning(this, "Validation error", "View opacity must lie within 0.0 and 1.0");
-        m_view.op_normal->setFocus();
-        return;
-    }
-
-    if(op_focused < 0.0 || op_focused > 1.0) {
-        QMessageBox::warning(this, "Validation error", "View opacity must lie within 0.0 and 1.0");
-        m_view.op_focused->setFocus();
-        return;
-    }
-
     s.view.op_normal  = op_normal;
     s.view.op_focused = op_focused;
 
-    accept();
+    emit settingsApplied();
+
+    return true;
+}
+
+
+
+void SettingsDialog::on_accept() {
+    if(store_configuration()) {
+        accept();
+    }
+}
+
+void SettingsDialog::on_apply() {
+    store_configuration();
 }

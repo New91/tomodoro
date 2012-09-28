@@ -137,7 +137,7 @@ void Timer::action_configure() {
     if(m_settings == NULL) {
         m_settings = new SettingsDialog;
 
-        connect(m_settings, SIGNAL(accepted()), SLOT(update_settings()));
+        connect(m_settings, SIGNAL(settingsApplied()), SLOT(update_settings()));
         connect(m_settings, SIGNAL(destroyed()), SLOT(dialog_destroyed()));
 
         m_settings->show();
