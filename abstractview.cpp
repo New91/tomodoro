@@ -136,4 +136,18 @@ void AbstractView::update_settings() {
     m_op_focused = s.view.op_focused;
 
     setWindowOpacity(m_op_normal);
+
+    // other view settings
+
+    m_settings.text_size    = s.view.text_size;
+
+    m_settings.flags        = s.view.main_dir;
+    if(s.view.inverted != 0)
+        m_settings.flags |= VIEW_INVERTED;
+
+    m_settings.border       = default_to_text((QColor)s.view.border);
+    m_settings.text_border  = default_to_text((QColor)s.view.text_border);
+    m_settings.text_color   = default_to_text((QColor)s.view.text_color);
+    m_settings.filling      = default_to_button((QColor)s.view.filling);
+    m_settings.text_filling = default_to_button((QColor)s.view.text_filling);
 }

@@ -25,19 +25,19 @@ private:
 
         QLineEdit*      buzz_int;
         QLineEdit*      buzz_dev;
+        QLineEdit*      text_size;
+
+        QComboBox*      main_dir;
+        QComboBox*      inverted;
+
+#define VIEW_COLOR(name, member)     QLineEdit* member;
+        VIEW_COLORS
+#undef VIEW_COLOR
     } m_view;
 
     struct {
         QLineEdit*      radius;
-        QLineEdit*      text_size;
-
-#define PIE_COLOR(name, member)     QLineEdit* member;
-        PIE_COLORS
-#undef PIE_COLOR
-
-        QComboBox*      direction1;
-        QComboBox*      direction2;
-        QComboBox*      inverted;
+        QComboBox*      grow_dir;
     } m_pie;
 
 

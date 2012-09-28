@@ -49,17 +49,51 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         QGroupBox*      gr   = new QGroupBox("View");
         QFormLayout*    form = new QFormLayout(gr);
 
-        form->addRow("View &default opacity (ratio)", m_view.op_normal = new QLineEdit);
+        form->addRow("View default &opacity (ratio)", m_view.op_normal = new QLineEdit);
         form->addRow("View &focus opacity (ratio)",  m_view.op_focused = new QLineEdit);
 
-        form->addRow("Buzz &interval (ms)",  m_view.buzz_int = new QLineEdit);
-        form->addRow("Buzz d&eviation (px)", m_view.buzz_dev = new QLineEdit);
+        form->addRow("Buzz &interval (ms)",     m_view.buzz_int = new QLineEdit);
+        form->addRow("Buzz d&eviation (px)",    m_view.buzz_dev = new QLineEdit);
+        form->addRow("&Font size (px)",         m_view.text_size = new QLineEdit);
+
+        form->addRow("Main &direction",         m_view.main_dir = new QComboBox);
+        form->addRow("&Behaviour",              m_view.inverted = new QComboBox);
+
+        m_view.main_dir->addItem("Top");
+        m_view.main_dir->addItem("Right");
+        m_view.main_dir->addItem("Bottom");
+        m_view.main_dir->addItem("Left");
+
+        m_view.inverted->addItem("Waxing");
+        m_view.inverted->addItem("Waning");
+
 
         m_view.op_normal->setValidator (new QDoubleValidator(0.0, 1.0, 3, this));
         m_view.op_focused->setValidator(new QDoubleValidator(0.0, 1.0, 3, this));
 
         m_view.buzz_int->setValidator(new QIntValidator(10, 1000, this));
         m_view.buzz_dev->setValidator(new QIntValidator(0, 100, this));
+        m_view.text_size->setValidator(new QIntValidator(5, 30, this));
+
+        main_layout->addWidget(gr);
+    }
+
+    {
+        QGroupBox*      gr   = new QGroupBox("Color");
+        QFormLayout*    form = new QFormLayout(gr);
+
+#define VIEW_COLOR(name, member)                            \
+        {                                                       \
+            ColorSelector*  sel = new ColorSelector;            \
+            QBoxLayout*     l = new QHBoxLayout;                \
+            l->addWidget(m_view.member = sel->attachedEdit());   \
+            l->addWidget(sel);                                  \
+            form->addRow(name, l);                              \
+        }
+
+        VIEW_COLORS;
+
+#undef VIEW_COLOR
 
         main_layout->addWidget(gr);
     }
@@ -68,39 +102,13 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         QGroupBox*      gr   = new QGroupBox("Pie");
         QFormLayout*    form = new QFormLayout(gr);
 
-        form->addRow("&Radius (px)",     m_pie.radius = new QLineEdit);
-        form->addRow("&Font size (px)",  m_pie.text_size = new QLineEdit);
+        form->addRow("&Radius (px)",        m_pie.radius = new QLineEdit);
+        form->addRow("&Growth direction",   m_pie.grow_dir = new QComboBox);
+
+        m_pie.grow_dir->addItem("Counterclockwise");
+        m_pie.grow_dir->addItem("Clockwise");
 
         m_pie.radius->setValidator(new QIntValidator(10, 1000, this));
-        m_pie.text_size->setValidator(new QIntValidator(5, 30, this));
-
-#define PIE_COLOR(name, member)                            \
-        {                                                       \
-            ColorSelector*  sel = new ColorSelector;            \
-            QBoxLayout*     l = new QHBoxLayout;                \
-            l->addWidget(m_pie.member = sel->attachedEdit());   \
-            l->addWidget(sel);                                  \
-            form->addRow(name, l);                              \
-        }
-
-        PIE_COLORS;
-
-#undef PIE_COLOR
-
-        form->addRow("Start &direction", m_pie.direction1 = new QComboBox);
-        form->addRow("Grown d&irection", m_pie.direction2 = new QComboBox);
-        form->addRow("&Behaviour", m_pie.inverted = new QComboBox);
-
-        m_pie.direction1->addItem("Top");
-        m_pie.direction1->addItem("Right");
-        m_pie.direction1->addItem("Bottom");
-        m_pie.direction1->addItem("Left");
-
-        m_pie.direction2->addItem("Counterclockwise");
-        m_pie.direction2->addItem("Clockwise");
-
-        m_pie.inverted->addItem("Waxing");
-        m_pie.inverted->addItem("Waning");
 
         main_layout->addWidget(gr);
     }
@@ -132,37 +140,37 @@ void SettingsDialog::load_configuration() {
 
     m_view.buzz_int->setText(QString::number(s.view.buzz_int));
     m_view.buzz_dev->setText(QString::number(s.view.buzz_dev));
+    m_view.text_size->setText(QString::number(s.view.text_size));
+
+    m_view.main_dir ->setCurrentIndex(s.view.main_dir);
+    m_view.inverted ->setCurrentIndex(s.view.inverted);
+
+#define VIEW_COLOR(name, member) m_view.member->setText(s.view.member);
+    VIEW_COLORS;
+#undef VIEW_COLOR
 
     m_pie.radius->setText(QString::number(s.pie.radius));
-    m_pie.text_size->setText(QString::number(s.pie.text_size));
-
-#define PIE_COLOR(name, member) m_pie.member->setText(s.pie.member);
-    PIE_COLORS;
-#undef PIE_COLOR
-
-    m_pie.direction1->setCurrentIndex(s.pie.direction1);
-    m_pie.direction2->setCurrentIndex(s.pie.direction2);
-    m_pie.inverted  ->setCurrentIndex(s.pie.inverted);
+    m_pie.grow_dir->setCurrentIndex(s.pie.grow_dir);
 }
 
 void SettingsDialog::on_accept() {
     Settings        s;
 
-    s.interval = m_common.timeout->text().toInt();
+    s.interval          = m_common.timeout->text().toInt();
 
-    s.view.buzz_int = m_view.buzz_int->text().toInt();
-    s.view.buzz_dev = m_view.buzz_dev->text().toInt();
+    s.view.buzz_int     = m_view.buzz_int->text().toInt();
+    s.view.buzz_dev     = m_view.buzz_dev->text().toInt();
+    s.view.text_size    = m_view.text_size->text().toInt();
+
+    s.view.main_dir     = m_view.main_dir->currentIndex();
+    s.view.inverted     = m_view.inverted->currentIndex();
+
+#define VIEW_COLOR(name, member) s.view.member = m_view.member->text();
+    VIEW_COLORS;
+#undef VIEW_COLOR
 
     s.pie.radius    = m_pie.radius->text().toInt();
-    s.pie.text_size = m_pie.text_size->text().toInt();
-
-#define PIE_COLOR(name, member) s.pie.member = m_pie.member->text();
-    PIE_COLORS;
-#undef PIE_COLOR
-
-    s.pie.direction1 = m_pie.direction1->currentIndex();
-    s.pie.direction2 = m_pie.direction2->currentIndex();
-    s.pie.inverted   = m_pie.inverted  ->currentIndex();
+    s.pie.grow_dir  = m_pie.grow_dir->currentIndex();
 
     //
     // Do not trust double validators

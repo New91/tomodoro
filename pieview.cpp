@@ -28,12 +28,12 @@ void PieView::paintEvent ( QPaintEvent * ) {
         p.setPen  (m_settings.border);
         p.setBrush(m_settings.filling);
 
-        const int start = 16 * 90 * ((m_settings.flags & PIE_DIRECTION_MASK) ^ 1);
+        const int start = 16 * 90 * ((m_settings.flags & VIEW_DIRECTION_MASK) ^ 1);
 
         int span = 16 * (360.0 * m_current / m_total);
 
-        if(m_settings.flags & PIE_INVERTED) span -= 16 * 360;
-        if(m_settings.flags & PIE_CLOCKWISE) span = -span;
+        if(m_settings.flags & VIEW_INVERTED) span -= 16 * 360;
+        if(m_clockwise) span = -span;
 
         p.drawPie(0, 0, width() - 1, height() - 1, start, span);
     }
@@ -42,9 +42,6 @@ void PieView::paintEvent ( QPaintEvent * ) {
 
     text_rect.adjust(-5, 0, 0, 0);
 
-
-
-    //text_rect.moveCenter(QPoint(width() / 2, height() / 2));
     text_rect.moveCenter(rect().center());
 
     p.setPen  (m_settings.text_border);
@@ -60,17 +57,7 @@ void PieView::update_settings() {
 
     Settings        s;
 
-    m_settings.border       = default_to_text((QColor)s.pie.border);
-    m_settings.text_border  = default_to_text((QColor)s.pie.text_border);
-    m_settings.text_color   = default_to_text((QColor)s.pie.text_color);
-    m_settings.filling      = default_to_button((QColor)s.pie.filling);
-    m_settings.text_filling = default_to_button((QColor)s.pie.text_filling);
-
-    m_settings.text_size    = s.pie.text_size;
-
-    m_settings.flags = s.pie.direction1;
-    if(s.pie.direction2 != 0) m_settings.flags |= PIE_CLOCKWISE;
-    if(s.pie.inverted   != 0) m_settings.flags |= PIE_INVERTED;
+    m_clockwise = s.pie.grow_dir != 0;
 
     const int d = s.pie.radius * 2;
     resize(d, d);
