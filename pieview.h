@@ -3,6 +3,8 @@
 
 #include "abstractview.h"
 
+#include "settings.h"
+
 class PieView : public AbstractView
 {
     Q_OBJECT
@@ -10,17 +12,12 @@ class PieView : public AbstractView
 private:
 
     struct {
-        QColor      border;
-        QColor      filling;
+        int     text_size;
+
+#define PIE_COLOR(name, member) QColor member;
+        PIE_COLORS
+#undef PIE_COLOR
     } m_settings;
-
-    QColor default_to_text(QColor c) const {
-        return c.isValid() ? c : palette().text().color();
-    }
-
-    QColor default_to_button(QColor c) const {
-        return c.isValid() ? c : palette().button().color();
-    }
 
 
 protected:

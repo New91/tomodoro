@@ -1,8 +1,6 @@
 #include "settingsdialog.h"
 
 
-#include "settings.h"
-
 #include "colorselector.h"
 
 #include <QMessageBox>
@@ -18,6 +16,13 @@
 
 #include <QIntValidator>
 #include <QDoubleValidator>
+
+
+
+
+
+
+
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
     QDialog(parent)
@@ -62,19 +67,24 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         QGroupBox*      gr   = new QGroupBox("Pie");
         QFormLayout*    form = new QFormLayout(gr);
 
-#define COLOR_SELECTOR(name, member)                        \
-        {                                                   \
-            ColorSelector*  sel = new ColorSelector;        \
-            QBoxLayout*     l = new QHBoxLayout;            \
-            l->addWidget((member) = sel->attachedEdit());   \
-            l->addWidget(sel);                              \
-            form->addRow((name), l);                        \
+        form->addRow("&Radius (px)",     m_pie.radius = new QLineEdit);
+        form->addRow("&Font size (px)",  m_pie.text_size = new QLineEdit);
+
+#define PIE_COLOR(name, member)                            \
+        {                                                       \
+            ColorSelector*  sel = new ColorSelector;            \
+            QBoxLayout*     l = new QHBoxLayout;                \
+            l->addWidget(m_pie.member = sel->attachedEdit());   \
+            l->addWidget(sel);                                  \
+            form->addRow(name, l);                              \
         }
 
-        COLOR_SELECTOR("Border",  m_pie.border);
-        COLOR_SELECTOR("Filling", m_pie.filling);
+        PIE_COLORS
 
-#undef COLOR_SELECTOR
+#undef PIE_COLOR
+
+        m_pie.radius->setValidator(new QIntValidator(10, 1000, this));
+        m_pie.text_size->setValidator(new QIntValidator(5, 30, this));
 
         main_layout->addWidget(gr);
     }
@@ -107,8 +117,12 @@ void SettingsDialog::load_configuration() {
     m_view.buzz_int->setText(QString::number(s.view.buzz_int));
     m_view.buzz_dev->setText(QString::number(s.view.buzz_dev));
 
-    m_pie.border ->setText(s.pie.border);
-    m_pie.filling->setText(s.pie.filling);
+    m_pie.radius->setText(QString::number(s.pie.radius));
+    m_pie.text_size->setText(QString::number(s.pie.text_size));
+
+#define PIE_COLOR(name, member) m_pie.member->setText(s.pie.member);
+    PIE_COLORS
+#undef PIE_COLOR
 }
 
 void SettingsDialog::on_accept() {
@@ -119,8 +133,12 @@ void SettingsDialog::on_accept() {
     s.view.buzz_int = m_view.buzz_int->text().toInt();
     s.view.buzz_dev = m_view.buzz_dev->text().toInt();
 
-    s.pie.border  = m_pie.border->text();
-    s.pie.filling = m_pie.filling->text();
+    s.pie.radius    = m_pie.radius->text().toInt();
+    s.pie.text_size = m_pie.text_size->text().toInt();
+
+#define PIE_COLOR(name, member) s.pie.member = m_pie.member->text();
+    PIE_COLORS
+#undef PIE_COLOR
 
     //
     // Do not trust double validators

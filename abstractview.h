@@ -28,6 +28,18 @@ protected:
 
     QString     m_text;             // precalculated from current/total
 
+    //
+    // a couple of utilities
+    //
+
+    QColor default_to_text(QColor c) const {
+        return c.isValid() ? c : palette().text().color();
+    }
+
+    QColor default_to_button(QColor c) const {
+        return c.isValid() ? c : palette().button().color();
+    }
+
 protected:
     void paintEvent ( QPaintEvent * event ) = 0;
 

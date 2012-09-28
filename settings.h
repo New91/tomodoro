@@ -3,28 +3,49 @@
 
 #include <QSettings>
 
-#include <QDebug>
+
+//
+// Some cool useful macros
+//
+
+
+#define SETTING_NAMES   \
+    SETTING_NAME(interval);             \
+    SETTING_NAME(op_normal);            \
+    SETTING_NAME(op_focused);           \
+    SETTING_NAME(buzz_int);             \
+    SETTING_NAME(buzz_dev);             \
+    SETTING_NAME(pie_radius);           \
+    SETTING_NAME(pie_text_size);        \
+    SETTING_NAME(pie_border);           \
+    SETTING_NAME(pie_filling);          \
+    SETTING_NAME(pie_text_border);      \
+    SETTING_NAME(pie_text_filling);     \
+    SETTING_NAME(pie_text_color);
+
+
+
+
+
+
+#define PIE_COLORS      \
+    PIE_COLOR("Border",        border);        \
+    PIE_COLOR("Filling",       filling);       \
+    PIE_COLOR("Text",          text_color);    \
+    PIE_COLOR("Text border",   text_border);   \
+    PIE_COLOR("Text filling",  text_filling);
+
+
 
 class Settings : public QObject
 {
     Q_OBJECT
 
 private:
-    static const char  name_interval[];
-    static const char  name_op_normal[];
-    static const char  name_op_focused[];
-    static const char  name_buzz_int[];
-    static const char  name_buzz_dev[];
 
-    // pie
-    static const char  name_pie_radius[];
-    static const char  name_pie_text_size[];
-    static const char  name_pie_border[];
-    static const char  name_pie_filling[];
-    static const char  name_pie_text_border[];
-    static const char  name_pie_text_filling[];
-    static const char  name_pie_text_color[];
-
+#define SETTING_NAME(name)  static const char  name_ ## name[];
+    SETTING_NAMES
+#undef SETTING_NAME
 
 
 public:
@@ -72,7 +93,7 @@ public:
 
     /////
 
-    IntRef<name_interval, 25 * 60>      interval;
+    IntRef<name_interval, 25 * 60>          interval;
 
     struct {
         RealRef<name_op_normal,  5, 10>     op_normal;
@@ -88,6 +109,11 @@ public:
 
         StrRef<name_pie_border>             border;
         StrRef<name_pie_filling>            filling;
+        StrRef<name_pie_text_border>        text_border;
+        StrRef<name_pie_text_filling>       text_filling;
+        StrRef<name_pie_text_color>         text_color;
+
+        // TODO: add direction settings
     } pie;
 };
 

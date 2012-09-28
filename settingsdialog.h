@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+#include "settings.h"
+
 
 class QLineEdit;
 
@@ -25,8 +27,12 @@ private:
     } m_view;
 
     struct {
-        QLineEdit*      border;
-        QLineEdit*      filling;
+        QLineEdit*      radius;
+        QLineEdit*      text_size;
+
+#define PIE_COLOR(name, member)     QLineEdit* member;
+        PIE_COLORS
+#undef PIE_COLOR
     } m_pie;
 
 
