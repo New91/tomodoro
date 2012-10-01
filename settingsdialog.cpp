@@ -40,6 +40,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         QFormLayout*    form = new QFormLayout(gr);
 
         form->addRow("&Main timeout (min)", m_common.timeout = new QLineEdit);
+        form->addRow("&Default view", m_common.default_view = new QComboBox);
+
+        m_common.default_view->addItem("Pie");
+        m_common.default_view->addItem("Bar");
 
         m_common.timeout->setValidator(new QIntValidator(1, 60 * 24, this));
 
@@ -54,10 +58,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         form->addRow("View &focus opacity (ratio)",  m_view.op_focused = new QLineEdit);
 
         form->addRow("Buzz &interval (ms)",     m_view.buzz_int = new QLineEdit);
-        form->addRow("Buzz d&eviation (px)",    m_view.buzz_dev = new QLineEdit);
-        form->addRow("&Font size (px)",         m_view.text_size = new QLineEdit);
+        form->addRow("Buzz de&viation (px)",    m_view.buzz_dev = new QLineEdit);
+        form->addRow("Fo&nt size (px)",         m_view.text_size = new QLineEdit);
 
-        form->addRow("Main &direction",         m_view.main_dir = new QComboBox);
+        form->addRow("Main dir&ection",         m_view.main_dir = new QComboBox);
         form->addRow("&Behaviour",              m_view.inverted = new QComboBox);
 
         m_view.main_dir->addItem("Top");
@@ -114,6 +118,19 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         main_layout->addWidget(gr);
     }
 
+    {
+        QGroupBox*      gr   = new QGroupBox("Bar");
+        QFormLayout*    form = new QFormLayout(gr);
+
+        form->addRow("&Length (px)", m_bar.length = new QLineEdit);
+        form->addRow("&Width (px)",  m_bar.width  = new QLineEdit);
+
+        m_bar.length->setValidator(new QIntValidator(10, 500, this));
+        m_bar.width ->setValidator(new QIntValidator(10, 500, this));
+
+        main_layout->addWidget(gr);
+    }
+
     main_layout->addStretch();
 
     {
@@ -136,6 +153,7 @@ void SettingsDialog::load_configuration() {
     Settings        s;
 
     m_common.timeout->setText(QString::number(s.interval));
+    m_common.default_view->setCurrentIndex(s.default_view);
 
     m_view.op_normal ->setText(QString::number(s.view.op_normal));
     m_view.op_focused->setText(QString::number(s.view.op_focused));
@@ -153,6 +171,9 @@ void SettingsDialog::load_configuration() {
 
     m_pie.radius->setText(QString::number(s.pie.radius));
     m_pie.grow_dir->setCurrentIndex(s.pie.grow_dir);
+
+    m_bar.length->setText(QString::number(s.bar.length));
+    m_bar.width ->setText(QString::number(s.bar.width));
 }
 
 bool SettingsDialog::store_configuration() {
@@ -183,6 +204,7 @@ bool SettingsDialog::store_configuration() {
     Settings        s;
 
     s.interval          = m_common.timeout->text().toInt();
+    s.default_view      = m_common.default_view->currentIndex();
 
     s.view.buzz_int     = m_view.buzz_int->text().toInt();
     s.view.buzz_dev     = m_view.buzz_dev->text().toInt();
@@ -197,6 +219,9 @@ bool SettingsDialog::store_configuration() {
 
     s.pie.radius    = m_pie.radius->text().toInt();
     s.pie.grow_dir  = m_pie.grow_dir->currentIndex();
+
+    s.bar.length    = m_bar.length->text().toInt();
+    s.bar.width     = m_bar.width ->text().toInt();
 
     s.view.op_normal  = op_normal;
     s.view.op_focused = op_focused;

@@ -15,7 +15,8 @@ protected:
 
 public:
     explicit PieView(QWidget *parent = 0);
-    
+    ~PieView();
+
 public slots:
     virtual void update_settings();
 

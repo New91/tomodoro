@@ -60,6 +60,8 @@ Timer::Timer(QObject *parent) :
 
     set_tray_tip();
 
+    m_view_num = Settings().default_view;
+
 
     // read settings
     update_settings();
@@ -197,6 +199,8 @@ void Timer::update_settings() {
     m_total = new_total;
 
     m_buzz_interval = s.view.buzz_int;
+
+    //m_view_num = s.default_view;
 
     if(m_view != NULL) {
         m_view->update_settings();

@@ -12,6 +12,7 @@
 
 #define SETTING_NAMES   \
     SETTING_NAME(interval);     \
+    SETTING_NAME(default_view); \
     SETTING_NAME(op_normal);    \
     SETTING_NAME(op_focused);   \
     SETTING_NAME(buzz_int);     \
@@ -109,6 +110,8 @@ public:
     ///////
 
     IntRef<name_interval, 25 * 60>          interval;
+
+    IntRef<name_default_view, 0>            default_view;
 
     struct {
         RealRef<name_op_normal,  5, 10>     op_normal;

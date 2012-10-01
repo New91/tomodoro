@@ -52,6 +52,7 @@ protected:
 
 public:
     explicit BarView(QWidget *parent = 0);
+    ~BarView();
 
 public slots:
     virtual void update_settings();

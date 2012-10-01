@@ -15,6 +15,13 @@ PieView::PieView(QWidget *parent) :
     QBoxLayout*     lo = new QHBoxLayout(this);
 
     lo->addWidget(customLabel());
+
+    move(QSettings().value("pie/pos").toPoint());
+}
+
+
+PieView::~PieView() {
+    QSettings().setValue("pie/pos", pos());
 }
 
 

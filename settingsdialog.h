@@ -17,6 +17,8 @@ class SettingsDialog : public QDialog
 private:
     struct {
         QLineEdit*      timeout;
+
+        QComboBox*      default_view;
     } m_common;
 
     struct {
@@ -39,6 +41,11 @@ private:
         QLineEdit*      radius;
         QComboBox*      grow_dir;
     } m_pie;
+
+    struct {
+        QLineEdit*      length;
+        QLineEdit*      width;
+    } m_bar;
 
 
 

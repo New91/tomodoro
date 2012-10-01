@@ -31,8 +31,15 @@ BarView::BarView(QWidget *parent) :
     m_layout->addWidget(customLabel(), 0, Qt::AlignCenter);
     m_layout->addWidget(m_bar_widget,  0, Qt::AlignCenter);
 
+    move(QSettings().value("bar/pos").toPoint());
+
     update_settings();
 }
+
+BarView::~BarView() {
+    QSettings().setValue("bar/pos", pos());
+}
+
 
 void BarView::bar_draw(QPainter* p) const {
 
