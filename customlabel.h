@@ -24,11 +24,12 @@ private:
 protected:
     void paintEvent ( QPaintEvent * event );
 
-//public:
+public:
     QSize sizeHint() const;
 
 public:
     explicit CustomLabel(QWidget *parent = 0);
+
 
 public slots:
     void setText ( const QString & );

@@ -3,99 +3,94 @@
 #include <QPainter>
 
 
+#include <QBoxLayout>
+
+#include <QDebug>
+
+
+
+#include "customlabel.h"
+
+
+using namespace bar_internals;
+
 BarView::BarView(QWidget *parent) :
-    AbstractView(parent)
+    AbstractView(parent),
+    m_bar_widget(new BarWidget(this)),
+    m_layout(NULL),
+    m_length(100),
+    m_width(20)
 {
+    //setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
+    m_layout = new QBoxLayout(QBoxLayout::LeftToRight, this);
+
+    m_layout->setMargin(0);
+    m_layout->setSpacing(1);
+
+    m_layout->addWidget(customLabel(), 0, Qt::AlignCenter);
+    m_layout->addWidget(m_bar_widget,  0, Qt::AlignCenter);
+
     update_settings();
 }
 
+void BarView::bar_draw(QPainter* p) const {
+
+    // QRect   r = p->window().adjusted(0,0, -1,-1);
+
+    // NOTE: the pivotal direction is DOWN
+
+    const int lm1 = m_length - 1;
+
+    QTransform  trs[4] = {
+        QTransform(+1, 0, 0, -1, 0, lm1),     // top
+        QTransform(0, +1, +1, 0, 0,   0),     // right
+        QTransform(+1, 0, 0, +1, 0,   0),     // down
+        QTransform(0, +1, -1, 0, lm1, 0)      // left
+    };
+
+    p->setTransform(trs[m_settings.flags & VIEW_DIRECTION_MASK]);
+
+
+    QRect   r(0, 0, m_width-1, m_length-1);
+
+    // draw bounding rect
+    p->setPen  (m_settings.border);
+    p->setBrush(Qt::NoBrush);
+    p->drawRect(r);
+
+    r.adjust(2, 2, -2, -2);
+
+    //r.setBottom(r.center().y() / 2);
+
+    int cur = m_current;
+
+    if(m_settings.flags & VIEW_INVERTED) {
+        cur = m_total - cur;
+    }
+
+    r.setHeight(r.height() * cur / m_total);
+
+    p->setPen  (m_settings.filling);
+    p->setBrush(m_settings.filling);
+    p->drawRect(r);
+}
+
+QSize BarView::bar_size_hint() const {
+    QSize   hint(m_width, m_length);
+
+    if(((m_settings.flags & VIEW_DIRECTION_MASK) & 1) != 0) {       // is horizontal ?
+        hint.transpose();
+    }
+
+    return hint;
+}
+
+
+
+
 void BarView::paintEvent ( QPaintEvent * ) {
-    QPainter        p(this);
-
-    //p.setFont(QFont("Arial", m_settings.text_size));
-
-    //
-    // make sure the widget has proper geometry
-    //
-
-    /*
-    QRect   text_rect = p.fontMetrics().boundingRect(m_text).adjusted(-5, 0, 0, 0);
-
-    {
-        int     w, h;
-
-        if(((m_settings.flags & VIEW_DIRECTION_MASK) & 1) == 0) {       // is horizontal ?
-            h = text_rect.height() + m_length;
-            w = qMax(text_rect.width(), m_width);
-        } else {
-            w = text_rect.width() + m_length;
-            h = qMax(text_rect.height(), m_width);
-        }
-
-        if(width() < w || height() < h) {
-            resize(w, h);
-            return;
-        }
-    }
-
-    //
-    // if the geometry is ok, do the actual painting
-    //
-
-    QRect   main = rect().adjusted(0, 0, -1, -1);
-    QRect   bar  = main;
-
-    switch(m_settings.flags & VIEW_DIRECTION_MASK) {
-    case 0: {
-        text_rect.moveBottomLeft(QPoint(0, main.bottom()));
-        bar.setBottom(text_rect.top());
-
-        int dw = bar.width() - m_width;
-        int dw2 = dw / 2;
-
-        bar.adjust(dw2, 0, dw2 - dw, 0);
-    } break;
-    case 2: {
-        text_rect.moveTopLeft(QPoint(0, main.top()));
-        bar.setTop(text_rect.bottom());
-
-        int dw = bar.width() - m_width;
-        int dw2 = dw / 2;
-
-        bar.adjust(dw2, 0, dw2 - dw, 0);
-    } break;
-    case 1: {
-        text_rect.moveTopLeft(QPoint(0, 0));
-        bar.setLeft(text_rect.right());
-
-        int dw = bar.height() - m_width;
-        int dw2 = dw / 2;
-
-        bar.adjust(0, dw2, 0, dw2 - dw);
-    } break;
-    case 3: {
-        text_rect.moveTopRight(QPoint(main.right(), 0));
-        text_rect.moveRight(main.right());
-        bar.setRight(text_rect.left());
-
-        int dw = bar.height() - m_width;
-        int dw2 = dw / 2;
-
-        bar.adjust(0, dw2, 0, dw2 - dw);
-    } break;
-    }
-
-    p.setPen  (m_settings.border);
-    p.setBrush(m_settings.filling);
-    p.drawRect(bar);
-
-    p.setPen  (m_settings.text_border);
-    p.setBrush(m_settings.text_filling);
-    p.drawRect(text_rect);
-
-    p.setPen  (m_settings.text_color);
-    p.drawText(text_rect, m_text, QTextOption(Qt::AlignCenter));
-    */
+    m_bar_widget->update();
 }
 
 void BarView::update_settings() {
@@ -107,9 +102,45 @@ void BarView::update_settings() {
     m_width  = s.bar.width;
 
     {
-        // downsize enough to trigger proper resize during next repaint
-        const int d = qMin(m_length, m_width);
+        QBoxLayout::Direction   dirs[4] = {
+            QBoxLayout::BottomToTop,
+            QBoxLayout::LeftToRight,
+            QBoxLayout::TopToBottom,
+            QBoxLayout::RightToLeft
+        };
 
-        resize(d, d);
+        m_layout->setDirection(dirs[m_settings.flags & VIEW_DIRECTION_MASK]);
     }
+
+    m_bar_widget->updateGeometry();
+    //m_bar_widget->update();
 }
+
+
+
+//////////////////////////////////////
+// bar_internals::BarWidget
+//
+
+BarWidget::BarWidget(BarView* parent_view) :
+    QWidget(),
+    m_bar_view(parent_view)
+{
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    //setAttribute(Qt::WA_TranslucentBackground);
+    setContextMenuPolicy(Qt::NoContextMenu);
+    //setAutoFillBackground(true);
+}
+
+void BarWidget::paintEvent(QPaintEvent* ) {
+    QPainter    p(this);
+
+    // delegate the drawing to the parent bar
+    m_bar_view->bar_draw(&p);
+}
+
+QSize BarWidget::sizeHint() const {
+    return m_bar_view->bar_size_hint();
+}
+

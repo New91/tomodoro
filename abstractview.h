@@ -78,7 +78,6 @@ protected:
         return m_custom_label;
     }
 
-    
 public slots:
     void tick(int current, int total);
     virtual void update_settings();
