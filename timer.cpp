@@ -65,14 +65,6 @@ Timer::Timer(QObject *parent) :
 
     // read settings
     update_settings();
-
-
-
-    /////
-
-    //action_configure(); // TODO: remove
-
-    action_start(); // TODO: remove
 }
 
 void Timer::show_hide_actions() {
@@ -130,13 +122,13 @@ void Timer::timeout() {
 
 
 void Timer::action_start(){
-    create_new_view();
-
-    show_hide_actions();
-
     // reset the timer
     m_counter = 0;
     m_timer.start(1000);
+
+    create_new_view();
+
+    show_hide_actions();
 
     set_tray_tip();
 }
@@ -185,8 +177,6 @@ void Timer::view_context_request(QPoint local_pos) {
 
 void Timer::dialog_destroyed(){
     m_settings = NULL;
-
-    //action_exit();      // TODO: remove
 }
 
 void Timer::update_settings() {
@@ -194,7 +184,7 @@ void Timer::update_settings() {
 
     Settings    s;
 
-    int new_total = s.interval; // * 60    TODO: set it back
+    int new_total = s.interval * 60;
     m_counter = m_counter * new_total / m_total;
     m_total = new_total;
 

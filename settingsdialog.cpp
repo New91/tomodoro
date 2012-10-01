@@ -84,7 +84,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     }
 
     {
-        QGroupBox*      gr   = new QGroupBox("Color");
+        QGroupBox*      gr   = new QGroupBox("Colors");
         QFormLayout*    form = new QFormLayout(gr);
 
 #define VIEW_COLOR(name, member)                            \
