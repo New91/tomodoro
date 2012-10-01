@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     settingsdialog.cpp \
     abstractview.cpp \
     colorselector.cpp \
-    barview.cpp
+    barview.cpp \
+    customlabel.cpp
 
 HEADERS  += \
     timer.h \
@@ -26,7 +27,8 @@ HEADERS  += \
     settingsdialog.h \
     abstractview.h \
     colorselector.h \
-    barview.h
+    barview.h \
+    customlabel.h
 
 RESOURCES += \
     resources.qrc

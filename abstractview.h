@@ -5,18 +5,26 @@
 
 #include "settings.h"
 
+
+class CustomLabel;
+
 class AbstractView : public QWidget
 {
     Q_OBJECT
 
 private:
-    QPoint      m_mouse_anchor;     // mouse cursor anchor (for handling dragging)
-    QPoint      m_win_anchor;       // buzzing anchor
+    QPoint          m_mouse_anchor;     // mouse cursor anchor (for handling dragging)
+    QPoint          m_win_anchor;       // buzzing anchor
 
-    int         m_conf_buzz_dev;    // buzz deviation
+    int             m_conf_buzz_dev;    // buzz deviation
 
-    qreal       m_op_normal;        // normal opacity
-    qreal       m_op_focused;       // focused opacity
+    qreal           m_op_normal;        // normal opacity
+    qreal           m_op_focused;       // focused opacity
+
+
+    // custom label (to be properly placed by the child's ctor)
+    CustomLabel*    m_custom_label;
+
 
     //
     // a couple of utilities
@@ -25,14 +33,6 @@ private:
     // NOTE: if (m_current == m_total) then we're in buzz mode
     bool is_buzzing() const {
         return m_current == m_total;
-    }
-
-    QColor default_to_text(QColor c) const {
-        return c.isValid() ? c : palette().text().color();
-    }
-
-    QColor default_to_button(QColor c) const {
-        return c.isValid() ? c : palette().button().color();
     }
 
 protected:
@@ -48,12 +48,10 @@ protected:
     };
 
     struct {
-        int         text_size;      // text size
         int         flags;          // main dir and invertion flag
 
-#define VIEW_COLOR(name, member) QColor member;
-        VIEW_COLORS
-#undef VIEW_COLOR
+        QColor      border;
+        QColor      filling;
     } m_settings;
 
     //
@@ -62,8 +60,6 @@ protected:
 
     int         m_current;          // seconds passed so far
     int         m_total;            // total seconds to pass
-
-    QString     m_text;             // precalculated from current/total
 
 
 protected:
@@ -77,6 +73,10 @@ protected:
 
 protected:
     explicit AbstractView(QWidget *parent = 0);
+
+    CustomLabel* customLabel() const {
+        return m_custom_label;
+    }
 
     
 public slots:

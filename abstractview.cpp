@@ -2,6 +2,8 @@
 
 #include "settings.h"
 
+#include "customlabel.h"
+
 #include <QMouseEvent>
 
 
@@ -18,10 +20,12 @@ AbstractView::AbstractView(QWidget *parent) :
     m_op_normal(0.5),
     m_op_focused(0.8),
 
-    m_current(0),
-    m_total(100),
+    m_custom_label(new CustomLabel),
 
-    m_text("--:--")
+    m_current(0),
+    m_total(100)
+
+    //m_text("--:--")
 {
     setAttribute(Qt::WA_TranslucentBackground);
 
@@ -116,12 +120,14 @@ void AbstractView::tick(int current, int total) {
     // Handle repaint
     //
 
-    // Redraw unless we're in the middle of buzzing
+    // Update text and redraw unless we're in the middle of buzzing
     if( !(buzzing && about_to_buzz) ) {
         int remaining = m_total - m_current;
-        m_text = QString("%1:%2")
+        QString text = QString("%1:%2")
                  .arg(QString::number(remaining / 60), 2, '0')
                  .arg(QString::number(remaining % 60), 2, '0');
+
+        m_custom_label->setText(text);
 
         update();
     }
@@ -139,17 +145,15 @@ void AbstractView::update_settings() {
 
     // other view settings
 
-    m_settings.text_size    = s.view.text_size;
-
     m_settings.flags        = s.view.main_dir;
     if(s.view.inverted != 0)
         m_settings.flags |= VIEW_INVERTED;
 
-    m_settings.border       = default_to_text((QColor)s.view.border);
-    m_settings.text_border  = default_to_text((QColor)s.view.text_border);
-    m_settings.text_color   = default_to_text((QColor)s.view.text_color);
-    m_settings.filling      = default_to_button((QColor)s.view.filling);
-    m_settings.text_filling = default_to_button((QColor)s.view.text_filling);
+    m_settings.border  = s.defaultToText(this, (QColor)s.view.border);
+    m_settings.filling = s.defaultToButton(this, (QColor)s.view.filling);
+
+    // propagate the event to the custom label
+    m_custom_label->update_settings();
 
     update();
 }

@@ -12,12 +12,13 @@ BarView::BarView(QWidget *parent) :
 void BarView::paintEvent ( QPaintEvent * ) {
     QPainter        p(this);
 
-    p.setFont(QFont("Arial", m_settings.text_size));
+    //p.setFont(QFont("Arial", m_settings.text_size));
 
     //
     // make sure the widget has proper geometry
     //
 
+    /*
     QRect   text_rect = p.fontMetrics().boundingRect(m_text).adjusted(-5, 0, 0, 0);
 
     {
@@ -94,6 +95,7 @@ void BarView::paintEvent ( QPaintEvent * ) {
 
     p.setPen  (m_settings.text_color);
     p.drawText(text_rect, m_text, QTextOption(Qt::AlignCenter));
+    */
 }
 
 void BarView::update_settings() {

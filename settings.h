@@ -2,6 +2,7 @@
 #define SETTINGS_H
 
 #include <QSettings>
+#include <QWidget>
 
 
 //
@@ -96,6 +97,16 @@ public:
     };
 
     /////
+
+    QColor defaultToText(const QWidget* w, QColor c) const {
+        return c.isValid() ? c : w->palette().text().color();
+    }
+
+    QColor defaultToButton(const QWidget* w, QColor c) const {
+        return c.isValid() ? c : w->palette().button().color();
+    }
+
+    ///////
 
     IntRef<name_interval, 25 * 60>          interval;
 

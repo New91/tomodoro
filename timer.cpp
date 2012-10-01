@@ -68,7 +68,9 @@ Timer::Timer(QObject *parent) :
 
     /////
 
-    action_configure(); // TODO: remove
+    //action_configure(); // TODO: remove
+
+    action_start(); // TODO: remove
 }
 
 void Timer::show_hide_actions() {
@@ -90,13 +92,13 @@ void Timer::create_new_view() {
         m_view = new BarView(&m_parent_holder);
     }
 
+    //connect(this, SIGNAL(tick(int,int)), m_view, SLOT(tick(int,int)));
+    connect(m_view, SIGNAL(customContextMenuRequested(QPoint)), SLOT(view_context_request(QPoint)));
+
     // show a view
     m_view->show();
 
     m_view->tick(m_counter, m_total);
-
-    //connect(this, SIGNAL(tick(int,int)), m_view, SLOT(tick(int,int)));
-    connect(m_view, SIGNAL(customContextMenuRequested(QPoint)), SLOT(view_context_request(QPoint)));
 }
 
 
@@ -111,7 +113,7 @@ void Timer::timeout() {
         /* emit */ m_view->tick(m_counter, m_total);
     }else if (!m_stop_time.isNull()) {
         // If we're not counting anything (we have no view),
-        // update the icons tooltip to indicate idle time.
+        // update the icon's tooltip to indicate idle time.
 
         int elapsed_sec = m_stop_time.elapsed() / 1000;
 
