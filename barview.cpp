@@ -117,7 +117,7 @@ QSize BarView::bar_size_hint() const {
 
 
 void BarView::paintEvent ( QPaintEvent * ) {
-    m_bar_widget->update();
+    //m_bar_widget->update();
 }
 
 void BarView::update_settings() {
