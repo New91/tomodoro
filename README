@@ -1,0 +1,31 @@
+== Tomodoro ==
+
+Copyright 2012 Yury Makarevich
+
+This file is part of Tomodoro.
+
+Tomodoro is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Tomodoro is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Tomodoro.  If not, see <http://www.gnu.org/licenses/>.
+
+The license's full text is included in COPYING file.
+
+== Introduction ==
+
+Tomodoro is a (yet another) simple timer for usage with the pomodoro technique (see: http://en.wikipedia.org/wiki/Pomodoro_Technique ).
+
+It is inteded to be pretty configurable.
+
+== Disclaimer ==
+
+This project has nothing to do with the projects that have the same or similar titles!
+Also, see GPL-3.
