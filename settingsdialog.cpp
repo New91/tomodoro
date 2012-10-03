@@ -53,32 +53,67 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     /////////////////////////////////////
 
-    QBoxLayout*         main_layout = new QVBoxLayout(this);
+    QTabWidget*         tabs = new QTabWidget;
 
     {
-        QGroupBox*      gr   = new QGroupBox("General");
-        QFormLayout*    form = new QFormLayout(gr);
+        QFrame*         fr   = new QFrame;
+        QBoxLayout*     gr_layout = new QVBoxLayout(fr);
 
-        form->addRow("&Main timeout (min)", m_common.timeout = new QLineEdit);
-        form->addRow("&Default view", m_common.default_view = new QComboBox);
+        {
+            QGroupBox*      gr   = new QGroupBox("General");
+            QFormLayout*    form = new QFormLayout(gr);
 
-        m_common.default_view->addItem("Pie");
-        m_common.default_view->addItem("Bar");
+            form->addRow("M&ain timeout (min)", m_common.timeout = new QLineEdit);
+            form->addRow("&Default view", m_common.default_view = new QComboBox);
 
-        m_common.timeout->setValidator(new QIntValidator(1, 60 * 24, this));
+            m_common.default_view->addItem("Pie");
+            m_common.default_view->addItem("Bar");
 
-        main_layout->addWidget(gr);
+            m_common.timeout->setValidator(new QIntValidator(1, 60 * 24, this));
+
+            gr_layout->addWidget(gr);
+        }
+
+        {
+            QGroupBox*      gr   = new QGroupBox("Pie");
+            QFormLayout*    form = new QFormLayout(gr);
+
+            form->addRow("&Radius (px)",        m_pie.radius = new QLineEdit);
+            form->addRow("&Growth direction",   m_pie.grow_dir = new QComboBox);
+
+            m_pie.grow_dir->addItem("Counterclockwise");
+            m_pie.grow_dir->addItem("Clockwise");
+
+            m_pie.radius->setValidator(new QIntValidator(10, 1000, this));
+
+            gr_layout->addWidget(gr);
+        }
+
+        {
+            QGroupBox*      gr   = new QGroupBox("Bar");
+            QFormLayout*    form = new QFormLayout(gr);
+
+            form->addRow("&Length (px)", m_bar.length = new QLineEdit);
+            form->addRow("&Width (px)",  m_bar.width  = new QLineEdit);
+
+            m_bar.length->setValidator(new QIntValidator(10, 500, this));
+            m_bar.width ->setValidator(new QIntValidator(10, 500, this));
+
+            gr_layout->addWidget(gr);
+        }
+
+        tabs->addTab(fr, "&Misc");
     }
 
     {
-        QGroupBox*      gr   = new QGroupBox("View");
-        QFormLayout*    form = new QFormLayout(gr);
+        QFrame*         fr   = new QFrame;
+        QFormLayout*    form = new QFormLayout(fr);
 
         form->addRow("View default &opacity (ratio)", m_view.op_normal = new QLineEdit);
         form->addRow("View &focus opacity (ratio)",  m_view.op_focused = new QLineEdit);
 
         form->addRow("Buzz &interval (ms)",     m_view.buzz_int = new QLineEdit);
-        form->addRow("Buzz de&viation (px)",    m_view.buzz_dev = new QLineEdit);
+        form->addRow("Buzz devia&tion (px)",    m_view.buzz_dev = new QLineEdit);
         form->addRow("Fo&nt size (px)",         m_view.text_size = new QLineEdit);
 
         form->addRow("Main dir&ection",         m_view.main_dir = new QComboBox);
@@ -100,12 +135,12 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         m_view.buzz_dev->setValidator(new QIntValidator(0, 100, this));
         m_view.text_size->setValidator(new QIntValidator(5, 30, this));
 
-        main_layout->addWidget(gr);
+        tabs->addTab(fr, "&View");
     }
 
     {
-        QGroupBox*      gr   = new QGroupBox("Colors");
-        QFormLayout*    form = new QFormLayout(gr);
+        QFrame*         fr   = new QFrame;
+        QFormLayout*    form = new QFormLayout(fr);
 
 #define VIEW_COLOR(name, member)                            \
         {                                                       \
@@ -120,36 +155,12 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
 #undef VIEW_COLOR
 
-        main_layout->addWidget(gr);
+        tabs->addTab(fr, "&Colors");
     }
 
-    {
-        QGroupBox*      gr   = new QGroupBox("Pie");
-        QFormLayout*    form = new QFormLayout(gr);
+    QBoxLayout* main_layout = new QVBoxLayout(this);
 
-        form->addRow("&Radius (px)",        m_pie.radius = new QLineEdit);
-        form->addRow("&Growth direction",   m_pie.grow_dir = new QComboBox);
-
-        m_pie.grow_dir->addItem("Counterclockwise");
-        m_pie.grow_dir->addItem("Clockwise");
-
-        m_pie.radius->setValidator(new QIntValidator(10, 1000, this));
-
-        main_layout->addWidget(gr);
-    }
-
-    {
-        QGroupBox*      gr   = new QGroupBox("Bar");
-        QFormLayout*    form = new QFormLayout(gr);
-
-        form->addRow("&Length (px)", m_bar.length = new QLineEdit);
-        form->addRow("&Width (px)",  m_bar.width  = new QLineEdit);
-
-        m_bar.length->setValidator(new QIntValidator(10, 500, this));
-        m_bar.width ->setValidator(new QIntValidator(10, 500, this));
-
-        main_layout->addWidget(gr);
-    }
+    main_layout->addWidget(tabs);
 
     main_layout->addStretch();
 
