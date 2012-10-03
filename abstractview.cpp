@@ -37,8 +37,8 @@ AbstractView::AbstractView(QWidget *parent) :
 
     m_conf_buzz_dev(5),
 
-    m_op_normal(0.5),
-    m_op_focused(0.8),
+    m_op_normal(50),
+    m_op_focused(80),
 
     m_custom_label(new CustomLabel),
 
@@ -95,12 +95,12 @@ void AbstractView::mouseMoveEvent(QMouseEvent* event) {
 }
 
 void AbstractView::enterEvent(QEvent *) {
-    setWindowOpacity(m_op_focused);
+    setWindowOpacity(static_cast<double>(m_op_focused) / 100.0);
 }
 
 
 void AbstractView::leaveEvent(QEvent *) {
-    setWindowOpacity(m_op_normal);
+    setWindowOpacity(static_cast<double>(m_op_normal) / 100.0);
 }
 
 
@@ -161,7 +161,8 @@ void AbstractView::update_settings() {
     m_op_normal  = s.view.op_normal;
     m_op_focused = s.view.op_focused;
 
-    setWindowOpacity(m_op_normal);
+    // emulate leave event to set the opacity
+    leaveEvent(NULL);
 
     // other view settings
 

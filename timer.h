@@ -26,6 +26,8 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 
+#include <QPointer>
+
 
 class SettingsDialog;
 class AbstractView;
@@ -54,8 +56,8 @@ private:
 
     int                 m_view_num;
 
-    SettingsDialog*     m_settings;
-    AbstractView*       m_view;
+    QPointer<SettingsDialog>    m_settings;
+    QPointer<AbstractView>      m_view;
 
     void show_hide_actions();
 

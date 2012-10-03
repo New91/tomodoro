@@ -23,6 +23,8 @@
 
 #include <QWidget>
 
+#include <QPointer>
+
 class QLineEdit;
 
 class ColorSelector : public QWidget
@@ -31,10 +33,9 @@ class ColorSelector : public QWidget
 
 private:
 
-    //QString         m_string;
-    QColor          m_color;
+    QColor                  m_color;
 
-    QLineEdit*      m_attached_edit;
+    QPointer<QLineEdit>     m_attached_edit;
 
     void set_new_color(QColor n, bool update_edit = true);
 

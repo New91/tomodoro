@@ -51,8 +51,8 @@ Timer::Timer(QObject *parent) :
 
     m_view_num(0),
 
-    m_settings(NULL),
-    m_view(NULL)
+    m_settings(),
+    m_view()
 {
     // set up the timer
     connect(&m_timer, SIGNAL(timeout()), SLOT(timeout()));
@@ -88,7 +88,7 @@ Timer::Timer(QObject *parent) :
 }
 
 void Timer::show_hide_actions() {
-    const bool idle = (m_view == NULL);
+    const bool idle = (!m_view);
 
     act_start ->setVisible( idle);
     act_stop  ->setVisible(!idle);
@@ -96,7 +96,7 @@ void Timer::show_hide_actions() {
 }
 
 void Timer::create_new_view() {
-    if(m_view != NULL) {
+    if(m_view) {
         delete m_view;
     }
 
@@ -117,7 +117,7 @@ void Timer::create_new_view() {
 
 
 void Timer::timeout() {
-    if(m_view != NULL) {
+    if(m_view) {
         if(m_counter < m_total) {
             m_counter++;
         } else {
@@ -155,7 +155,7 @@ void Timer::action_start(){
 
 void Timer::action_stop() {
     delete m_view;
-    m_view = NULL;
+    //m_view = NULL;
 
     show_hide_actions();
 
@@ -173,7 +173,7 @@ void Timer::action_switch() {
 }
 
 void Timer::action_configure() {
-    if(m_settings == NULL) {
+    if(!m_settings) {
         m_settings = new SettingsDialog;
 
         connect(m_settings, SIGNAL(settingsApplied()), SLOT(update_settings()));
@@ -196,7 +196,7 @@ void Timer::view_context_request(QPoint local_pos) {
 }
 
 void Timer::dialog_destroyed(){
-    m_settings = NULL;
+    //m_settings = NULL;
 }
 
 void Timer::update_settings() {
@@ -212,7 +212,7 @@ void Timer::update_settings() {
 
     //m_view_num = s.default_view;
 
-    if(m_view != NULL) {
+    if(m_view) {
         m_view->update_settings();
     }
 }

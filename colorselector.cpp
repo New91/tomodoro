@@ -32,7 +32,7 @@ ColorSelector::ColorSelector(QWidget *parent) :
     QWidget(parent),
     //QString(),
     m_color(),
-    m_attached_edit(NULL)
+    m_attached_edit()
 {
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 }
@@ -74,7 +74,7 @@ void ColorSelector::set_new_color(QColor n, bool update_edit) {
 
         update();
 
-        if(m_attached_edit != NULL && update_edit) {
+        if(m_attached_edit && update_edit) {
             m_attached_edit->setText(m_color.name());
         }
     }
@@ -85,13 +85,13 @@ void ColorSelector::attached_text_changed(QString name) {
 }
 
 QLineEdit* ColorSelector::attachedEdit() {
-    if(m_attached_edit == NULL) {
+    if(!m_attached_edit) {
         m_attached_edit = new QLineEdit;
 
         connect(m_attached_edit, SIGNAL(textChanged(QString)),
                 this, SLOT(attached_text_changed(QString)));
 
-        connect(m_attached_edit, SIGNAL(destroyed()), this, SLOT(deleteLater()));
+        connect(m_attached_edit, SIGNAL(destroyed()), this, SLOT(deleteLater()));       // remove that?
         connect(this, SIGNAL(destroyed()), m_attached_edit, SLOT(deleteLater()));
     }
 

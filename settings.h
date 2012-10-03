@@ -134,8 +134,8 @@ public:
     IntRef<name_default_view, 0>            default_view;
 
     struct {
-        RealRef<name_op_normal,  5, 10>     op_normal;
-        RealRef<name_op_focused, 8, 10>     op_focused;
+        IntRef<name_op_normal,  50>         op_normal;
+        IntRef<name_op_focused, 80>         op_focused;
 
         IntRef<name_buzz_int, 30>           buzz_int;
         IntRef<name_buzz_dev, 5>            buzz_dev;

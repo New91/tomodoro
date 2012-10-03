@@ -38,8 +38,8 @@ private:
 
     int             m_conf_buzz_dev;    // buzz deviation
 
-    qreal           m_op_normal;        // normal opacity
-    qreal           m_op_focused;       // focused opacity
+    int             m_op_normal;        // normal opacity (in percents)
+    int             m_op_focused;       // focused opacity (in percents)
 
 
     // custom label (to be properly placed by the child's ctor)

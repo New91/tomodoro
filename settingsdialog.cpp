@@ -109,8 +109,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         QFrame*         fr   = new QFrame;
         QFormLayout*    form = new QFormLayout(fr);
 
-        form->addRow("View default &opacity (ratio)", m_view.op_normal = new QLineEdit);
-        form->addRow("View &focus opacity (ratio)",  m_view.op_focused = new QLineEdit);
+        form->addRow("View default &opacity (%)", m_view.op_normal = new QLineEdit);
+        form->addRow("View &focus opacity (%)",  m_view.op_focused = new QLineEdit);
 
         form->addRow("Buzz &interval (ms)",     m_view.buzz_int = new QLineEdit);
         form->addRow("Buzz devia&tion (px)",    m_view.buzz_dev = new QLineEdit);
@@ -128,8 +128,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         m_view.inverted->addItem("Waning");
 
 
-        m_view.op_normal->setValidator (new QDoubleValidator(0.0, 1.0, 3, this));
-        m_view.op_focused->setValidator(new QDoubleValidator(0.0, 1.0, 3, this));
+        m_view.op_normal->setValidator (new QIntValidator(1, 100, this));
+        m_view.op_focused->setValidator(new QIntValidator(1, 100, this));
 
         m_view.buzz_int->setValidator(new QIntValidator(10, 1000, this));
         m_view.buzz_dev->setValidator(new QIntValidator(0, 100, this));
@@ -208,12 +208,13 @@ void SettingsDialog::load_configuration() {
 }
 
 bool SettingsDialog::store_configuration() {
+    /*
     //
     // Do not trust double validators
     //
 
-    qreal op_normal  = m_view.op_normal->text().toDouble();
-    qreal op_focused = m_view.op_focused->text().toDouble();
+    qreal op_normal  = m_view.op_normal->text().toInt();
+    qreal op_focused = m_view.op_focused->text().toInt();
 
     if(op_normal < 0.0 || op_normal > 1.0) {
         QMessageBox::warning(this, "Validation error", "View opacity must lie within 0.0 and 1.0");
@@ -226,6 +227,7 @@ bool SettingsDialog::store_configuration() {
         m_view.op_focused->setFocus();
         return false;
     }
+    */
 
 
     //
@@ -254,8 +256,8 @@ bool SettingsDialog::store_configuration() {
     s.bar.length    = m_bar.length->text().toInt();
     s.bar.width     = m_bar.width ->text().toInt();
 
-    s.view.op_normal  = op_normal;
-    s.view.op_focused = op_focused;
+    s.view.op_normal  = m_view.op_normal->text().toInt();
+    s.view.op_focused = m_view.op_focused->text().toInt();
 
     emit settingsApplied();
 
