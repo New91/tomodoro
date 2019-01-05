@@ -18,7 +18,7 @@
  */
 
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include "settings.h"
 
 #include "timer.h"
